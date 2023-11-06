@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 require('dotenv').config();
 
@@ -29,24 +29,58 @@ async function run() {
 
         const booksCategoryCollections = client.db("booksDB").collection("category")
         const booksCollections = client.db("booksDB").collection("books")
+        const borrowedBookCollection = client.db("booksDB").collection("borrowedBooks")
 
         //Books Category
-        app.get('/booksCategory', async(req,res)=>{
+        app.get('/booksCategory', async (req, res) => {
             const result = await booksCategoryCollections.find().toArray();
             res.send(result)
         })
 
         //addBooks
-        app.get('/books', async(req,res)=>{
+        app.get('/books', async (req, res) => {
             const result = await booksCollections.find().toArray()
             res.send(result)
         })
-        app.post('/books', async(req,res)=>{
+        app.post('/books', async (req, res) => {
             const book = req.body;
             const result = await booksCollections.insertOne(book)
             res.send(result)
         })
+        app.get('/books/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
 
+            const result = await booksCollections.findOne(query)
+
+            res.send(result)
+        })
+        app.patch('/books/:id', async(req,res)=>{
+            const id = req.params.id;
+            const updatedBooks = req.body;
+            console.log(updatedBooks)
+            const filter = {_id: new ObjectId(id)}
+            const updatedDoc = {
+                $set: {
+                    quantity: updatedBooks.quantity
+                }
+            }
+            const result= await booksCollections.updateOne(filter,updatedDoc)
+            res.send(result)
+        })
+       
+    
+        //borrowed
+        app.get('/borrowedBooks', async (req, res) => {
+            const result = await borrowedBookCollection.find().toArray()
+            res.send(result)
+        })
+        app.post('/borrowedBooks', async (req, res) => {
+            const borrowedBook = req.body;
+            const result = await borrowedBookCollection.insertOne(borrowedBook)
+            res.send(result)
+        })
+       
 
 
 
