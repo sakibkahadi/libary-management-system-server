@@ -38,10 +38,39 @@ async function run() {
         })
         //all books
 
-        app.get('/allBooks', async(req,res)=>{
+        app.get('/allBooks', async (req, res) => {
             const result = await booksCollections.find().toArray()
             res.send(result)
         })
+
+        //updated books from all books
+        app.get('/allBooks/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await booksCollections.findOne(query)
+            res.send(result)
+        })
+        app.put('/allBooks/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedBooks = req.body;
+            console.log(updatedBooks)
+            const filter = { _id: new ObjectId(id) }
+            const options = {upsert: true}
+            const updatedDoc = {
+                $set: {
+    
+                    photo:updatedBooks.photo,
+                    bookName:updatedBooks.bookName,
+                    quantity:updatedBooks.quantity,
+                    authorName:updatedBooks.authorName,
+                    category:updatedBooks.category,
+                    rating:updatedBooks.rating,
+                    description:updatedBooks.description,                }
+            }
+            const result = await booksCollections.updateOne(filter, updatedDoc, options)
+            res.send(result)
+        })
+
 
         //addBooks
         app.get('/books', async (req, res) => {
@@ -61,26 +90,26 @@ async function run() {
 
             res.send(result)
         })
-        app.patch('/books/:id', async(req,res)=>{
+        app.patch('/books/:id', async (req, res) => {
             const id = req.params.id;
             const updatedBooks = req.body;
             console.log(updatedBooks)
-            const filter = {_id: new ObjectId(id)}
+            const filter = { _id: new ObjectId(id) }
             const updatedDoc = {
                 $set: {
                     quantity: updatedBooks.quantity
                 }
             }
-            const result= await booksCollections.updateOne(filter,updatedDoc)
+            const result = await booksCollections.updateOne(filter, updatedDoc)
             res.send(result)
         })
 
         //borrowed
         app.get('/borrowedBooks', async (req, res) => {
-            let query ={};
+            let query = {};
             console.log(req.query.email)
-            if(req.query?.email){
-                query= {email: req.query.email}
+            if (req.query?.email) {
+                query = { email: req.query.email }
             }
             console.log(query)
             const result = await borrowedBookCollection.find(query).toArray()
@@ -91,9 +120,9 @@ async function run() {
             const result = await borrowedBookCollection.insertOne(borrowedBook)
             res.send(result)
         })
-        app.delete('/borrowedBooks/:id', async(req,res)=>{
+        app.delete('/borrowedBooks/:id', async (req, res) => {
             const id = req.params.id
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await borrowedBookCollection.deleteOne(query)
             res.send(result)
         })
@@ -106,7 +135,7 @@ async function run() {
 
         //     res.send(result)
         // })
-       
+
 
 
 
