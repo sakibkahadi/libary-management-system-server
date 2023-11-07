@@ -36,6 +36,12 @@ async function run() {
             const result = await booksCategoryCollections.find().toArray();
             res.send(result)
         })
+        //all books
+
+        app.get('/allBooks', async(req,res)=>{
+            const result = await booksCollections.find().toArray()
+            res.send(result)
+        })
 
         //addBooks
         app.get('/books', async (req, res) => {
@@ -68,11 +74,16 @@ async function run() {
             const result= await booksCollections.updateOne(filter,updatedDoc)
             res.send(result)
         })
-       
-    
+
         //borrowed
         app.get('/borrowedBooks', async (req, res) => {
-            const result = await borrowedBookCollection.find().toArray()
+            let query ={};
+            console.log(req.query.email)
+            if(req.query?.email){
+                query= {email: req.query.email}
+            }
+            console.log(query)
+            const result = await borrowedBookCollection.find(query).toArray()
             res.send(result)
         })
         app.post('/borrowedBooks', async (req, res) => {
@@ -80,6 +91,21 @@ async function run() {
             const result = await borrowedBookCollection.insertOne(borrowedBook)
             res.send(result)
         })
+        app.delete('/borrowedBooks/:id', async(req,res)=>{
+            const id = req.params.id
+            const query = {_id: new ObjectId(id)}
+            const result = await borrowedBookCollection.deleteOne(query)
+            res.send(result)
+        })
+        //read
+        // app.get('/reads/:id', async (res,req)=>{
+        //     const id = req.params.id;
+        //     const query = { _id: new ObjectId(id) }
+
+        //     const result = await booksCollections.findOne(query)
+
+        //     res.send(result)
+        // })
        
 
 
