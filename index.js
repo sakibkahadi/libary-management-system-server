@@ -7,7 +7,7 @@ const app = express()
 require('dotenv').config();
 
 app.use(cors({
-    origin:['http://localhost:5173', 'http://localhost:5174'],
+    origin:['https://libraserve-1019b.web.app', 'https://libraserve-1019b.firebaseapp.com'],
     credentials: true
 }))
 app.use(express.json())
