@@ -89,13 +89,13 @@ async function run() {
         })
 
         //updated books from all books
-        app.get('/allBooks/:id', verifyToken, async (req, res) => {
+        app.get('/allBooks/:id', verifyToken,  async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
-            console.log('token owner info', req.user)
-            if(req.user.email  !== req.query.email){
-                return res.status(403).send({message: 'forbidden access'})
-            }
+            // console.log('token owner info', req.user)
+            // if(req.user.email  !== req.query.email){
+            //     return res.status(403).send({message: 'forbidden access'})
+            // }
             const result = await booksCollections.findOne(query)
             res.send(result)
         })
@@ -175,15 +175,15 @@ async function run() {
             const result = await borrowedBookCollection.deleteOne(query)
             res.send(result)
         })
-        //read
-        // app.get('/reads/:id', async (res,req)=>{
-        //     const id = req.params.id;
-        //     const query = { _id: new ObjectId(id) }
+        
+        app.get('/reads/:id', async (res,req)=>{
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
 
-        //     const result = await booksCollections.findOne(query)
+            const result = await booksCollections.findOne(query)
 
-        //     res.send(result)
-        // })
+            res.send(result)
+        })
 
 
 
